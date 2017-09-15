@@ -13,7 +13,7 @@ from time import sleep
 
 # Written by Montini Cristian and Uberti Davide
 
-# Look for make a configuration file where constructor take the values, like buffer_size
+
 
 class Server(object):
 
