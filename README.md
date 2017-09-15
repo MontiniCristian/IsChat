@@ -2,7 +2,7 @@
 Client-Server based chat application
 
 ### Specs:
-IsChat provide a socket based communication control that
+IsChat provides a socket based communication control that
 allow you to chat with friends that are connected to the same
 network without internet connection.
 It can be useful for example inside colleges, where outgoing
