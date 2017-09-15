@@ -45,6 +45,7 @@ class Server(object):
         while True:
             try:
                 client, address = self.server.accept()
+                # Look the signal module to handle the closing thread
                 threading.Thread(target=self.handler, args=(client, address)).start()
 
             except KeyboardInterrupt:
