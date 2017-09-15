@@ -16,7 +16,6 @@ from time import sleep
 
 
 class Server(object):
-
     def __init__(self):
         """
         Constructor: initialize server variables.
@@ -28,7 +27,7 @@ class Server(object):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.buffer_size = 1024
         self.host = 'localhost'
-        self.port = 49
+        self.port = 52
 
     def run(self):
 
@@ -46,7 +45,18 @@ class Server(object):
             try:
                 client, address = self.server.accept()
                 # Look the signal module to handle the closing thread
-                threading.Thread(target=self.handler, args=(client, address)).start()
+
+                threading.Thread(target=self.handler, args=(client, address), daemon=True).start()
+
+            except KeyboardInterrupt:
+                self.server.close()
+                exit()
+
+
+
+
+
+
 
             except KeyboardInterrupt:
                 print("\n\nQuitting..")
