@@ -6,35 +6,41 @@
     For any question contact us via mail.
 """
 
+import os
 import socket
 import threading
 from time import sleep
 
+banner = '''
+                   ______     
+                   \    /   _____    _____
+                    |  |   / ____|  / ____| 
+                    |  |  / /__    | /
+                    |  |  \____ \  | |
+                    |  |   ____\ \ | \____
+                   /____\ |______/  \_____|
 
-# Written by Montini Cristian and Uberti Davide
-
-
+         '''
 
 class Server(object):
     def __init__(self):
         """
         Constructor: initialize server variables.
-
         """
+
         super().__init__()
         self.client = None
         self.address = None
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.buffer_size = 1024
         self.host = 'localhost'
-        self.port = 52
+        self.port = 50
+        self.banner = str(banner)
 
     def run(self):
-
         """
         This method run the server and create a thread
         for handle every new client that could be connected to.
-
         """
 
         print("Starting server " + self.host + " on port " + str(self.port))
@@ -43,24 +49,19 @@ class Server(object):
 
         while True:
             try:
+
                 client, address = self.server.accept()
-                # Look the signal module to handle the closing thread
-
-                threading.Thread(target=self.handler, args=(client, address), daemon=True).start()
+                threading.Thread(target=self.handler, args=(self.client, self.address), daemon=True).start()
 
             except KeyboardInterrupt:
-                self.server.close()
-                exit()
 
+                self.stop()
 
+            except (ConnectionResetError,
+                    ConnectionError, ConnectionAbortedError,
+                    ConnectionRefusedError):
 
-
-
-
-
-            except KeyboardInterrupt:
-                print("\n\nQuitting..")
-                break
+                self.connection_error()
 
     def handler(self, client, address):
         """
@@ -69,48 +70,50 @@ class Server(object):
 
         :param client:
         :param address:
-        :return:
         """
         while True:
 
-            self.print_banner(client)
+            self.server.send(banner.encode)
 
             while True:
 
                 try:
+
                     data = client.recv(self.buffer_size)
                     if data:
                         print(str(data.decode()))
+
 
                     else:
                         print("Connection closed by client")
                         break
 
-                except:
+                except ConnectionAbortedError:
+
                     print("\n\nError!")
                     break
             break
 
-    @staticmethod
-    def print_banner(client):
+    def stop(self):
         """
-        This method send the server banner to the client before
-        starting messaging.
-        The banner will be customizable by the user modifying it
-        from a configuration file.
-
-        :param client:
-        :return:
+        This method is used to quit the server every time
+        that is needed, like ctrl+C closing.
         """
-        banner = '''
-                   ______     
-                   \    /   _____    _____
-                    |  |   / ____|  / ____| 
-                    |  |  / /__    | /
-                    |  |  \____ \  | |
-                    |  |   ____\ \ | \____
-                   /____\ |______/  \_____|
-              
-              '''
 
-        client.send(banner.encode())
+        print("\nQuitting...\n\n")
+        self.server.close()
+        sleep(1)
+        os.system("reset")
+        exit()
+
+    def connection_error(self):
+        """
+        This method is called every time the server has
+        an error in runtime, like connection error.
+        """
+
+        print("Connection Error!\n\nAborted!")
+        self.server.close()
+        exit()
+
+

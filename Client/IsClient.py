@@ -6,11 +6,9 @@
     For any question contact us via mail.
 """
 
-import socket
 import os
+import socket
 from time import sleep
-
-import errno
 
 
 class Client(object):
@@ -28,8 +26,8 @@ class Client(object):
         This method take the ip address and the port
         of the server from command line input.
         Nick authentication is going to be developed.
-
         """
+
         self.ip = input("[IP-SERVER] > ")
         self.port = input("[PORT] > ")
         # self.nick = input("[NINK] > ")
@@ -54,16 +52,18 @@ class Client(object):
 
                 message = input("> ")
                 if message == "q" or message == "Q":
+
                     self.stop()
 
                 else:
+
                     self.server.send(message.encode())
 
-            except socket.error as e:  # Socket exception
+            except (ConnectionAbortedError, ConnectionRefusedError,
+                    ConnectionError, ConnectionResetError):
 
-                if e.errno == errno.ECONNRESET:
-                    print("Connection Error")
-                    self.stop()
+                self.connection_error()
+
 
 
             except KeyboardInterrupt:
@@ -74,10 +74,20 @@ class Client(object):
         This method is used to quit the client every time
         that is needed, like an ConnectionError or whatever
         error could be throwed on runtime.
-
         """
+
         print("\nQuitting...\n\n")
         self.server.close()
         sleep(1)
         os.system("reset")
+        exit()
+
+    def connection_error(self):
+        """
+        This method is called when client can't communicate
+        with the server anymore.
+        """
+
+        print("Connection Error!\n\nAborted!")
+        self.server.close()
         exit()

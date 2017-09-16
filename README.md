@@ -9,7 +9,7 @@ It can be useful for example inside colleges, where outgoing
 traffic filtering doesn't allow you to use classic chat
 applications anytime you want to texting with you school's mates
 to suggest to them any kind of information.
-It include a no-discovery sistem which close immediately the
+It include a no-discovery system which close immediately the
 application.
 
 ### Coming soon:
