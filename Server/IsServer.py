@@ -22,6 +22,7 @@ banner = '''
 
          '''
 
+
 class Server(object):
     def __init__(self):
         """
@@ -50,7 +51,7 @@ class Server(object):
         while True:
             try:
 
-                client, address = self.server.accept()
+                self.client, address = self.server.accept()
                 threading.Thread(target=self.handler, args=(self.client, self.address), daemon=True).start()
 
             except KeyboardInterrupt:
@@ -73,26 +74,21 @@ class Server(object):
         """
         while True:
 
-            self.server.send(banner.encode)
+            try:
 
-            while True:
-
-                try:
-
-                    data = client.recv(self.buffer_size)
-                    if data:
-                        print(str(data.decode()))
+                data = self.client.recv(self.buffer_size)
+                if data:
+                    print(str(data.decode()))
 
 
-                    else:
-                        print("Connection closed by client")
-                        break
-
-                except ConnectionAbortedError:
-
-                    print("\n\nError!")
+                else:
+                    print("Connection closed by client")
                     break
-            break
+
+            except ConnectionAbortedError:
+
+                print("\n\nError!")
+                break
 
     def stop(self):
         """
@@ -115,5 +111,3 @@ class Server(object):
         print("Connection Error!\n\nAborted!")
         self.server.close()
         exit()
-
-

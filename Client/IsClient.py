@@ -45,8 +45,6 @@ class Client(object):
         os.system("clear")
         server_address = (self.ip, int(self.port))
         self.server.connect(server_address)
-        banner = self.server.recv(self.buffer_size)
-        print(banner.decode())
         while True:
             try:
 
